@@ -58,7 +58,7 @@ Graph ReadGraphEdgeList(int vertex_count, int edge_count, std::istream& in_strea
   for (int edge_id = 0; edge_id < edge_count; ++edge_id) {
     int first, second, weight;
     in_stream >> first >> second >> weight; 
-    --source, --destination;  // convert to 0-based
+    --first, --second;  // convert to 0-based
     graph[first].emplace_back(second, weight);
     graph[second].emplace_back(first, weight);
   }
