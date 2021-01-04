@@ -22,11 +22,6 @@ int main() {
 
   long double lower_bound = -10'000, upper_bound = 10'000, precision = 1e-10;
   auto unary_predicate = [&] (long double x) -> bool {
-    // if (a > 0) {
-    //   return Cubic(x) < 0;
-    // } else {
-    //   return Cubic(x) > 0;
-    // }
     return (a > 0) ^ (Cubic(a, b, c, d, x) > 0);
   };
 

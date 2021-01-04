@@ -18,8 +18,6 @@ T BinarySearch(T lower_bound, T upper_bound, std::function<bool(T)> unary_predic
 template <typename T = int>
 std::vector<T> ReadArray(int size = 0, std::istream& in_stream = std::cin);
 
-int BinarySearch(int lower_bound, int upper_bound, std::function<bool(int)> unary_predicate);
-
 int main() {
   std::ios::sync_with_stdio(false);
   std::cin.tie(nullptr);

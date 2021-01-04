@@ -24,11 +24,11 @@ int main() {
   const auto stalls_coordinates = ReadArray(stall_count);
 
   int lower_bound = 0, upper_bound = std::numeric_limits<int>::max();
-  auto unary_predicate = [&] (int distance_between_stalls) -> bool {
+  auto unary_predicate = [&] (int distance_between_cows) -> bool {
     int previous_stall_coordinate = std::numeric_limits<int>::min();
     int current_cow_count = 0;
     for (auto stall_coordinate : stalls_coordinates) {
-      if (stall_coordinate >= previous_stall_coordinate + distance_between_stalls) {
+      if (stall_coordinate >= previous_stall_coordinate + distance_between_cows) {
         previous_stall_coordinate = stall_coordinate;
         ++current_cow_count;
       }
