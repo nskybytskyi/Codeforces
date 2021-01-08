@@ -1,3 +1,4 @@
+#include <iostream>
 #include <vector>
 
 /* reads an array of given size from the input stream
