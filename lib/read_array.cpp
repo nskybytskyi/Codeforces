@@ -1,3 +1,5 @@
+#include "read_array.h"
+
 template <typename T>
 std::vector<T> ReadArray(int size, std::istream& in_stream) {
   if (!size) {
