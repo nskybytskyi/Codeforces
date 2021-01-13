@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <iostream>
+#include <iterator>
 #include <numeric>
 #include <unordered_map>
 #include <utility>
@@ -13,6 +14,15 @@ std::vector<T> ReadArray(int size = 0, std::istream& in_stream = std::cin);
 template <typename T>
 void PrintArray(const std::vector<T>& array, std::ostream& out_stream = std::cout,
                 bool size = false, char element_separator = ' ', char end = '\n');
+
+template <typename T> 
+using Counter = std::unordered_map<T, int>;
+
+template <typename Iterator>
+using ValueType = typename std::iterator_traits<Iterator>::value_type;
+
+template <class InputIt>
+Counter<ValueType<InputIt>> BuildCounter(InputIt first, InputIt last);
 
 class DSU {
   public:
@@ -57,6 +67,15 @@ void PrintArray(const std::vector<T>& array, std::ostream& out_stream,
     out_stream << element << element_separator;
   }
   out_stream << end;
+}
+
+template <class InputIt>
+Counter<ValueType<InputIt>> BuildCounter(InputIt first, InputIt last) {
+  Counter<ValueType<InputIt>> counter;
+  for (auto it = first; it != last; ++it) {
+    ++counter[*it];
+  }
+  return counter;
 }
 
 DSU::DSU(int size) {
