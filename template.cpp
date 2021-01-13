@@ -66,8 +66,7 @@ DSU::DSU(int size) {
 }
 
 int DSU::Find(int vertex) const {
-  return (vertex == parent_[vertex])
-    ? vertex : (parent_[vertex] = Find(parent_[vertex]));
+  return (vertex == parent_[vertex]) ? vertex : (parent_[vertex] = Find(parent_[vertex]));
 }
 
 void DSU::Union(int first, int second) {
