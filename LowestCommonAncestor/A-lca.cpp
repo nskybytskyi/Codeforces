@@ -64,7 +64,9 @@ int LCAComputer::ComputeLCA(int first, int second) const {
   const auto second_ancestors = GetAncestors(second);
   const int second_ancestors_count = second_ancestors.size();
   int lowest_common_ancestor = kRoot;
-  for (int i = 0; i < std::min(first_ancestors_count, second_ancestors_count); ++i) {
+  const int min_ancestors_count \
+    = std::min(first_ancestors_count, second_ancestors_count);
+  for (int i = 0; i < min_ancestors_count; ++i) {
     if (first_ancestors[i] == second_ancestors[i]) {
       lowest_common_ancestor = first_ancestors[i];
     }

@@ -127,7 +127,8 @@ int main() {
   Graph tree(n_vertices);
   for (auto bridge: bridges) {
     // vertex adjacent component
-    int first = components[bridge.first], second = components[bridge.second];
+    const int first = components[bridge.first];
+    const int second = components[bridge.second];
     tree[first].push_back(second);
     tree[second].push_back(first);
   }
@@ -220,7 +221,7 @@ void ComponentsBuilder::Initialize(const std::set<Edge>& bridges) {
   for (size_t vertex = 0; vertex < vertex_count; ++vertex) {
     for (int adjacent : graph[vertex]) {
       if (bridges.find(std::make_pair(vertex, adjacent)) == bridges.end() &&
-        bridges.find(std::make_pair(adjacent, vertex)) == bridges.end()) {
+          bridges.find(std::make_pair(adjacent, vertex)) == bridges.end()) {
         disjoint_set_union.UnionSets(vertex, adjacent);
       }
     }
@@ -284,5 +285,6 @@ void LcaComputer::Dfs(int vertex, int parent) {
 }
 
 bool LcaComputer::IsAncestor(int first, int second) const {
-  return time_in[first] <= time_in[second] && time_out[first] >= time_out[second];
+  return time_in[first] <= time_in[second] \
+    && time_out[first] >= time_out[second];
 }

@@ -61,7 +61,8 @@ int main() {
   return 0;
 }
 
-LCAComputer::LCAComputer(int size) : size_(size), max_power_(33 - __builtin_clz(size)) {
+LCAComputer::LCAComputer(int size)
+    : size_(size), max_power_(33 - __builtin_clz(size)) {
   sparse_table_.resize(max_power_);
   for (auto& sparse_layer : sparse_table_) {
     sparse_layer.resize((size_ << 1) - 1);
@@ -117,8 +118,8 @@ void LCAComputer::DepthFirstSearch(int vertex, int depth) {
   first_[vertex] = order_.size();
   order_.push_back(vertex);
 
-  for (auto successor : graph_[vertex]) {
-    DepthFirstSearch(successor, depth + 1);
+  for (auto child : graph_[vertex]) {
+    DepthFirstSearch(child, depth + 1);
     order_.push_back(vertex);
   }
 }

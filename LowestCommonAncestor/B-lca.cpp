@@ -61,13 +61,16 @@ int main() {
   lca_computer.Initialize();
 
   for (const auto& get_query : get_queries) {
-    std::cout << lca_computer.ComputeLCA(get_query.first, get_query.second) + 1 << "\n";
+    const int lowest_common_ancestor \
+      = lca_computer.ComputeLCA(get_query.first, get_query.second);
+    std::cout << lowest_common_ancestor + 1 << "\n";
   }
 
   return 0;
 }
 
-LCAComputer::LCAComputer(int size) : size_(size), max_power_(31 - __builtin_clz(size)) {
+LCAComputer::LCAComputer(int size)
+    : size_(size), max_power_(31 - __builtin_clz(size)) {
   parent_.resize(max_power_);
   for (auto& parent_layer : parent_) {
     parent_layer.resize(size_);
@@ -118,5 +121,6 @@ void LCAComputer::DepthFirstSearch(int vertex) {
 }
 
 inline bool LCAComputer::IsAncestor(int first, int second) const {
-  return time_in_[first] <= time_in_[second] && time_out_[second] <= time_out_[first];
+  return time_in_[first] <= time_in_[second] \
+    && time_out_[second] <= time_out_[first];
 }
