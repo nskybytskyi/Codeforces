@@ -1,3 +1,5 @@
+#include <memory>
+
 template <unsigned int N = 30> 
 class BitTrie {
   private:
@@ -125,4 +127,38 @@ std::vector<int> solve(std::vector<int>& nums, std::vector<Query>& queries) {
   }
 
   return answer;
+}
+
+// Example Usage
+// # Max XOR of Two Integers
+// You are given a list of positive integers nums. 
+// Return the maximum possible nums[i] ^ nums[j] for any i < j.
+
+// ## Constraints
+
+// - n ≤ 100,000 where n is the length of nums
+
+// ## Example 1
+
+// ### Input
+// nums = [1, 2, 3, 7]
+
+// ### Output
+// 6
+
+// ### Explanation
+// We can have 1 ^ 7 = 6
+
+#include <algorithm>
+
+int solve(const std::vector<int>& nums) {
+  BitTrie bit_trie;
+  for (auto num : nums) {
+    bit_trie.Insert(num);
+  }
+  int max_xor = 0;
+  for (auto num : nums) {
+    max_xor = std::max(max_xor, num ^ bit_trie.FindMaximumXor(num));
+  }
+  return max_xor;
 }
