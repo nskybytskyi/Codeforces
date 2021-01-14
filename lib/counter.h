@@ -8,4 +8,10 @@ template <typename Iterator>
 using ValueType = typename std::iterator_traits<Iterator>::value_type;
 
 template <class InputIt>
-Counter<ValueType<InputIt>> BuildCounter(InputIt first, InputIt last);
+Counter<ValueType<InputIt>> BuildCounter(InputIt first, InputIt last) {
+  Counter<ValueType<InputIt>> counter;
+  for (auto it = first; it != last; ++it) {
+    ++counter[*it];
+  }
+  return counter;
+}
