@@ -24,6 +24,12 @@ using ValueType = typename std::iterator_traits<Iterator>::value_type;
 template <class InputIt>
 Counter<ValueType<InputIt>> BuildCounter(InputIt first, InputIt last);
 
+template <typename T>
+using IndexedValue = std::pair<int, T>;
+
+template <class InputIt>
+std::vector<IndexedValue<ValueType<InputIt>>> Enumerate(InputIt first, InputIt last);
+
 class DSU {
   public:
     explicit DSU(int size);
@@ -76,6 +82,15 @@ Counter<ValueType<InputIt>> BuildCounter(InputIt first, InputIt last) {
     ++counter[*it];
   }
   return counter;
+}
+
+template <class InputIt>
+std::vector<IndexedValue<ValueType<InputIt>>> Enumerate(InputIt first, InputIt last) {
+  std::vector<IndexedValue<ValueType<InputIt>>> pairs;
+  for (auto it = first; it != last; ++it) {
+    pairs.emplace_back(pairs.size(), *it);
+  }
+  return pairs;
 }
 
 DSU::DSU(int size) {
