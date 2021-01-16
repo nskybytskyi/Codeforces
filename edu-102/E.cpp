@@ -64,9 +64,10 @@ std::vector<int64_t> DijkstraHeap(const Graph& graph, int source) {
   heap.emplace(0, source);
 
   while (!heap.empty()) {
-    // select closest unused vertex in O(log vertex_count)
+    // extract closest unused vertex in O(log vertex_count)
     const auto [closest_distance, closest_vertex] = heap.top();
     heap.pop();
+
     if (closest_distance < kInfinity) {
       if (distance[closest_vertex] == closest_distance) {
         // process all outgoing edges from it

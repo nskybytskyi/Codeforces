@@ -76,9 +76,10 @@ std::pair<std::vector<int>, std::vector<int>> DijkstraHeapParent(const Graph& gr
   heap.emplace(0, source);
 
   while (!heap.empty()) {
-    // select closest unused vertex in O(log n)
+    // extract closest unused vertex in O(log n)
     const auto [closest_distance, closest_vertex] = heap.top();
     heap.pop();
+
     if (closest_distance < kInfinity) {
       if (distance[closest_vertex] == closest_distance) {
         // process all outgoing edges from it
