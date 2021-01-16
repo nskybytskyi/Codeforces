@@ -28,6 +28,13 @@ int main() {
     std::cin >> first >> second >> weight;
     --first, --second;
 
+    
+    // bitmask rows meanings:
+    // 1 0 only max
+    // 1 1 min and max 
+    // 0 1 only min
+    // 0 0 no min, no max 
+    
     for (int bitmask : {0, 1, 2, 3}) {  // use edge as not min and not max
       graph[first + bitmask * vertex_count].emplace_back(second + bitmask * vertex_count, weight);
       graph[second + bitmask * vertex_count].emplace_back(first + bitmask * vertex_count, weight);
@@ -46,6 +53,12 @@ int main() {
 
   const auto shortest_distances = DijkstraHeap(graph);
   for (int vertex = 1; vertex < vertex_count; ++vertex) {
+    // shortest_distances[vertex] is taken to cover path length 1 
+    // for instance from A to B according to defined path it will be
+    // dist(a, b) + max - min = dist(a, b) + dist(a, b) - dist(a, b) = dist(a, b)
+    // this falls back to the normal case
+    // also shortest_distances[vertex + 3 * vertex_count] is always smaller than
+    // shortest_distances[vertex] . Hence taking min works !
     std::cout << std::min(shortest_distances[vertex],
       shortest_distances[vertex + 3 * vertex_count]) << " ";
   }
@@ -64,8 +77,9 @@ std::vector<int64_t> DijkstraHeap(const Graph& graph, int source) {
   heap.emplace(0, source);
 
   while (!heap.empty()) {
-    // select closest unused vertex in O(log vertex_count)
+    // select closest unused vertex in O(1)
     const auto [closest_distance, closest_vertex] = heap.top();
+    // removes closest unused vertex in O(log vertex_count)
     heap.pop();
     if (closest_distance < kInfinity) {
       if (distance[closest_vertex] == closest_distance) {
