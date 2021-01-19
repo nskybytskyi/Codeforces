@@ -44,38 +44,32 @@ int main() {
     int64_t n;
     cin >> n;
 
-    vector<pair<int,int>>ops;
+    vector<pair<int, int>> ops;
     vector<int> p(n);
+    iota(p.begin(), p.end(), 1);
     int64_t t = 0;
-    int l = 0, r = n - 1;
-    for (; l + 1 < r - 1; l += 2, r -= 2) {
-      p[l + 1] = r + 1;
-      p[r - 1] = l + 2;
-      p[r] = l + 1;
-      p[l] = r;
-      ops.emplace_back(l + 2, r + 1);
-      t += (r - l - 1) * (r - l - 1);
-      ops.emplace_back(l + 1, r);
-      t += (r - l - 1) * (r - l - 1);
-      ops.emplace_back(l + 1, r + 1);
-      t += (r - l) * (r - l);
-    }
 
-    if (l + 2 == r) {
-      p[l] = l + 3;
-      p[l + 1] = l + 1;
-      p[l + 2] = l + 2;
-      ops.emplace_back(l + 3, l + 1);
-      ops.emplace_back(l + 2, l + 1);
-      t += 5;
-    } else if (l + 1 == r) {
-      p[l] = l + 2;
-      p[l + 1] = l + 1;
-      ops.emplace_back(l + 1, l + 2);
-      t += 1;
-    } else if (l == r) {
-      p[l] = l + 1;
+    t += (n - 1) * (n - 1);
+    swap(p[0], p[n - 1]);
+    ops.emplace_back(1, n);
+
+    int l = 1, r = n - 2;
+    bool turn = true;
+    while (l <= r) {
+      if (turn) {
+        t += (n - l - 1) * 1ll * (n - l - 1);
+        swap(p[l], p[n - 1]);
+        ops.emplace_back(l + 1, n);
+        ++l;
+      } else {
+        t += r * 1ll * r;
+        swap(p[r], p[0]);
+        ops.emplace_back(r + 1, 1);
+        --r;
+      }
+      turn = !turn;
     }
+    reverse(ops.begin(), ops.end());
 
     cout << t << "\n";
     PrintArray(p);
