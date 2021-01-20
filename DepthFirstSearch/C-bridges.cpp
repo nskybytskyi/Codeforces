@@ -14,7 +14,7 @@ std::pair<std::vector<int>, std::vector<int>> ComputeTimes(const Graph& graph);
 
 void ComputeTimesDepthFirstSearch(const Graph& graph, int vertex,
   int* timer_ptr, std::pair<std::vector<int>, std::vector<int>>* times_ptr,
-  std::vector<int8_t>* visiteв_ptr);
+  std::vector<int8_t>* visited_ptr);
 
 using Bridge = Edge;
 
