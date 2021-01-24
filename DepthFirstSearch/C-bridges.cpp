@@ -16,15 +16,13 @@ void ComputeTimesDepthFirstSearch(const Graph& graph, int vertex,
   int* timer_ptr, std::pair<std::vector<int>, std::vector<int>>* times_ptr,
   std::vector<int8_t>* visited_ptr);
 
-using Bridge = Edge;
-
-std::vector<Bridge> FindBridges(const Graph& graph);
+std::vector<Edge> FindBridges(const Graph& graph);
 
 void FindBridgesDepthFirstSearch(const Graph& graph, int vertex, int parent,
   const std::vector<int>& times, std::vector<int>* min_back_in_time_ptr,
-  std::vector<int8_t>* visited_ptr, std::vector<Bridge>* bridges_ptr);
+  std::vector<int8_t>* visited_ptr, std::vector<Edge>* bridges_ptr);
 
-void PrintBridges(const std::vector<Bridge>& bridges,
+void PrintBridges(const std::vector<Edge>& bridges,
   std::ostream& out_stream = std::cout);
 
 int main() {
@@ -91,9 +89,9 @@ void ComputeTimesDepthFirstSearch(const Graph& graph, int vertex,
   ++(*timer_ptr);
 }
 
-std::vector<Bridge> FindBridges(const Graph& graph) {
+std::vector<Edge> FindBridges(const Graph& graph) {
   const auto time_in = ComputeTimes(graph).first;
-  std::vector<Bridge> bridges;
+  std::vector<Edge> bridges;
   const int vertex_count = graph.size();
   std::vector<int8_t> visited(vertex_count);
   std::vector<int> min_back_in_time(vertex_count);
@@ -104,7 +102,7 @@ std::vector<Bridge> FindBridges(const Graph& graph) {
     }
   }
   std::sort(bridges.begin(), bridges.end(),
-    [] (const Bridge& first, const Bridge& second) -> bool {
+    [] (const Edge& first, const Edge& second) -> bool {
       return first.second < second.second;
     });
   return bridges;
@@ -112,7 +110,7 @@ std::vector<Bridge> FindBridges(const Graph& graph) {
 
 void FindBridgesDepthFirstSearch(const Graph& graph, int vertex, int parent,
     const std::vector<int>& time_in, std::vector<int>* min_back_in_time_ptr,
-    std::vector<int8_t>* visited_ptr, std::vector<Bridge>* bridges_ptr) {
+    std::vector<int8_t>* visited_ptr, std::vector<Edge>* bridges_ptr) {
   (*visited_ptr)[vertex] = true;
   (*min_back_in_time_ptr)[vertex] = time_in[vertex];
   for (auto [adjacent, edge_id] : graph[vertex]) {
@@ -134,10 +132,10 @@ void FindBridgesDepthFirstSearch(const Graph& graph, int vertex, int parent,
   }
 }
 
-void PrintBridges(const std::vector<Bridge>& bridges, std::ostream& out_stream) {
+void PrintBridges(const std::vector<Edge>& bridges, std::ostream& out_stream) {
   out_stream << bridges.size() << "\n";
-  for (auto bridge : bridges) {
-    out_stream << bridge.second + 1 << " ";
+  for (auto Edge : bridges) {
+    out_stream << Edge.second + 1 << " ";
   }
   out_stream << "\n";
 }

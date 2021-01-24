@@ -1,4 +1,6 @@
+#include <algorithm>
 #include <iostream>
+#include <set>
 #include <numeric>
 #include <unordered_map>
 #include <vector>
@@ -110,17 +112,26 @@ class Colormap : IColormap<Vertex> {
     std::vector<Color> colormap_;
 };
 
-struct TimeDFSVisitor : IDFSVisitor<Vertex, Edge> {
-  explicit TimeDFSVisitor(int vertex_count) {
+struct CutpointDFSVisitor : IDFSVisitor<Vertex, Edge> {
+  explicit CutpointDFSVisitor(int vertex_count) {
+    parent.resize(vertex_count, -2);
     time_in.resize(vertex_count);
-    time_out.resize(vertex_count);
+    children.resize(vertex_count);
+    min_back_time_in.resize(vertex_count);
   }
 
+  void StartVertex(Vertex vertec) override;
   void DiscoverVertex(Vertex vertex) override;
+  void ExamineEdge(const Edge& edge) override;
+  void TreeEdge(const Edge& edge) override;
+  void BackEdge(const Edge& edge) override;
+  void ForwardOrCrossEdge(const Edge& edge) override;
   void FinishVertex(Vertex vertex) override;
 
   int timer = 0;
-  std::vector<int> time_in, time_out;
+  std::set<Vertex> cutpoints;
+  std::vector<Vertex> parent;
+  std::vector<int> time_in, children, min_back_time_in;
 };
 
 int main() {
@@ -128,43 +139,28 @@ int main() {
   std::cin.tie(nullptr);
   std::cout.tie(nullptr);
 
-  std::freopen("ancestor.in", "r", stdin);
-  std::freopen("ancestor.out", "w", stdout);
+  std::freopen("points.in", "r", stdin);
+  std::freopen("points.out", "w", stdout);
 
-  int vertex_count;
-  std::cin >> vertex_count;
-
+  int vertex_count, edge_count;
+  std::cin >> vertex_count >> edge_count;
   Graph graph(vertex_count);
-  Vertex start = -1;
-  for (Vertex vertex = 0, parent; vertex < vertex_count; ++vertex) {
-    std::cin >> parent;
-    if (!parent) {
-      start = vertex;
-    } else {
-      --parent;
-      graph.AddEdge({parent, vertex});
-    }
+  while (edge_count --> 0) {
+    Vertex first, second;
+    std::cin >> first >> second;
+    --first, --second;
+    graph.AddEdge({first, second});
+    graph.AddEdge({second, first});
   }
 
-  TimeDFSVisitor time_dfs_visitor(vertex_count);
-  DepthFirstSearch<Vertex, Graph, Colormap, TimeDFSVisitor>(graph, time_dfs_visitor, start);
+  CutpointDFSVisitor cutpoint_dfs_visitor(vertex_count);
+  DepthFirstSearch<Vertex, Graph, Colormap, CutpointDFSVisitor>(graph, cutpoint_dfs_visitor);
 
-  int query_count;
-  std::cin >> query_count;
-
-  while (query_count --> 0) {
-    int ancestor, vertex;
-    std::cin >> ancestor >> vertex;
-    --ancestor, --vertex;
-
-    if (time_dfs_visitor.time_in[ancestor] <= time_dfs_visitor.time_in[vertex] &&
-        time_dfs_visitor.time_out[vertex] <= time_dfs_visitor.time_out[ancestor]) {
-      std::cout << 1;
-    } else {
-      std::cout << 0;
-    }
-    std::cout << "\n";
+  std::cout << cutpoint_dfs_visitor.cutpoints.size() << "\n";
+  for (const auto& cutpoint : cutpoint_dfs_visitor.cutpoints) {
+    std::cout << cutpoint + 1 << " ";
   }
+  std::cout << "\n";
 
   return 0;
 }
@@ -231,10 +227,44 @@ void Colormap::SetColor(Vertex vertex, Color color) {
   colormap_[vertex] = color;
 }
 
-void TimeDFSVisitor::DiscoverVertex(Vertex vertex) {
-  time_in[vertex] = timer++;
+void CutpointDFSVisitor::StartVertex(Vertex vertex) {
+  parent[vertex] = -1;
 }
 
-void TimeDFSVisitor::FinishVertex(Vertex vertex) {
-  time_out[vertex] = timer++;
+void CutpointDFSVisitor::DiscoverVertex(Vertex vertex) {
+  time_in[vertex] = timer++;
+  min_back_time_in[vertex] = time_in[vertex];
+}
+
+void CutpointDFSVisitor::ExamineEdge(const Edge& edge) {
+  if (parent[edge.destination] == -2) {
+    parent[edge.destination] = edge.source;
+  }
+} 
+
+void CutpointDFSVisitor::TreeEdge(const Edge& edge) {
+  min_back_time_in[edge.source] \
+    = std::min(min_back_time_in[edge.source], min_back_time_in[edge.destination]);
+  if (min_back_time_in[edge.destination] >= time_in[edge.source] && parent[edge.source] != -1) {
+    cutpoints.insert(edge.source);
+  }
+  ++children[edge.source];
+}
+
+void CutpointDFSVisitor::BackEdge(const Edge& edge) {
+  if (parent[edge.source] != edge.destination) {
+    min_back_time_in[edge.source] \
+      = std::min(min_back_time_in[edge.source], time_in[edge.destination]);
+  }
+}
+
+void CutpointDFSVisitor::ForwardOrCrossEdge(const Edge& edge) {
+  min_back_time_in[edge.source] \
+    = std::min(min_back_time_in[edge.source], time_in[edge.destination]);
+}
+
+void CutpointDFSVisitor::FinishVertex(Vertex vertex) {
+  if (parent[vertex] == -1 && children[vertex] > 1) {
+    cutpoints.insert(vertex);
+  }
 }

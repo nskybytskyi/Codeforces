@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <iostream>
 #include <numeric>
 #include <unordered_map>
@@ -74,7 +75,9 @@ void DepthFirstSearchVisit(const Graph& graph, Colormap& colormap, DFSVisitor& v
 
 using Vertex = int;
 
-using Edge = IEdge<Vertex>;
+struct Edge : IEdge<Vertex> {
+  int edge_id;
+};
 
 class Graph : IGraph<Vertex, Edge> {
   public:
@@ -110,17 +113,24 @@ class Colormap : IColormap<Vertex> {
     std::vector<Color> colormap_;
 };
 
-struct TimeDFSVisitor : IDFSVisitor<Vertex, Edge> {
-  explicit TimeDFSVisitor(int vertex_count) {
+struct BridgeDFSVisitor : IDFSVisitor<Vertex, Edge> {
+  explicit BridgeDFSVisitor(int vertex_count) {
     time_in.resize(vertex_count);
-    time_out.resize(vertex_count);
+    parent.resize(vertex_count, -2);
+    min_back_time_in.resize(vertex_count);
   }
 
+  void StartVertex(Vertex vertex) override;
   void DiscoverVertex(Vertex vertex) override;
-  void FinishVertex(Vertex vertex) override;
+  void ExamineEdge(const Edge& edge) override;
+  void TreeEdge(const Edge& edge) override;
+  void BackEdge(const Edge& edge) override;
+  void ForwardOrCrossEdge(const Edge& edge) override;
 
   int timer = 0;
-  std::vector<int> time_in, time_out;
+  std::vector<Edge> bridges;
+  std::vector<Vertex> parent;
+  std::vector<int> time_in, min_back_time_in;
 };
 
 int main() {
@@ -128,43 +138,32 @@ int main() {
   std::cin.tie(nullptr);
   std::cout.tie(nullptr);
 
-  std::freopen("ancestor.in", "r", stdin);
-  std::freopen("ancestor.out", "w", stdout);
+  std::freopen("bridges.in", "r", stdin);
+  std::freopen("bridges.out", "w", stdout);
 
-  int vertex_count;
-  std::cin >> vertex_count;
-
+  int vertex_count, edge_count;
+  std::cin >> vertex_count >> edge_count;
   Graph graph(vertex_count);
-  Vertex start = -1;
-  for (Vertex vertex = 0, parent; vertex < vertex_count; ++vertex) {
-    std::cin >> parent;
-    if (!parent) {
-      start = vertex;
-    } else {
-      --parent;
-      graph.AddEdge({parent, vertex});
-    }
+  for (int edge_id = 0; edge_id < edge_count; ++edge_id) {
+    Vertex first, second;
+    std::cin >> first >> second;
+    --first, --second;
+    graph.AddEdge({first, second, edge_id});
+    graph.AddEdge({second, first, edge_id});
   }
 
-  TimeDFSVisitor time_dfs_visitor(vertex_count);
-  DepthFirstSearch<Vertex, Graph, Colormap, TimeDFSVisitor>(graph, time_dfs_visitor, start);
+  BridgeDFSVisitor bridge_dfs_visitor(vertex_count);
+  DepthFirstSearch<Vertex, Graph, Colormap, BridgeDFSVisitor>(graph, bridge_dfs_visitor);
 
-  int query_count;
-  std::cin >> query_count;
-
-  while (query_count --> 0) {
-    int ancestor, vertex;
-    std::cin >> ancestor >> vertex;
-    --ancestor, --vertex;
-
-    if (time_dfs_visitor.time_in[ancestor] <= time_dfs_visitor.time_in[vertex] &&
-        time_dfs_visitor.time_out[vertex] <= time_dfs_visitor.time_out[ancestor]) {
-      std::cout << 1;
-    } else {
-      std::cout << 0;
-    }
-    std::cout << "\n";
+  std::sort(bridge_dfs_visitor.bridges.begin(), bridge_dfs_visitor.bridges.end(),
+    [] (const Edge& first, const Edge& second) -> bool {
+      return first.edge_id < second.edge_id;
+    });
+  std::cout << bridge_dfs_visitor.bridges.size() << "\n";
+  for (const auto& bridge : bridge_dfs_visitor.bridges) {
+    std::cout << bridge.edge_id + 1 << " ";
   }
+  std::cout << "\n";
 
   return 0;
 }
@@ -231,10 +230,37 @@ void Colormap::SetColor(Vertex vertex, Color color) {
   colormap_[vertex] = color;
 }
 
-void TimeDFSVisitor::DiscoverVertex(Vertex vertex) {
-  time_in[vertex] = timer++;
+void BridgeDFSVisitor::StartVertex(Vertex vertex) {
+  parent[vertex] = -1;
 }
 
-void TimeDFSVisitor::FinishVertex(Vertex vertex) {
-  time_out[vertex] = timer++;
+void BridgeDFSVisitor::DiscoverVertex(Vertex vertex) {
+  time_in[vertex] = timer++;
+  min_back_time_in[vertex] = time_in[vertex];
+}
+
+void BridgeDFSVisitor::ExamineEdge(const Edge& edge) {
+  if (parent[edge.destination] == -2) {
+    parent[edge.destination] = edge.source;
+  }
+} 
+
+void BridgeDFSVisitor::TreeEdge(const Edge& edge) {
+  min_back_time_in[edge.source] \
+    = std::min(min_back_time_in[edge.source], min_back_time_in[edge.destination]);
+  if (min_back_time_in[edge.destination] > time_in[edge.source]) {
+    bridges.push_back(edge);
+  }
+}
+
+void BridgeDFSVisitor::BackEdge(const Edge& edge) {
+  if (parent[edge.source] != edge.destination) {
+    min_back_time_in[edge.source] \
+      = std::min(min_back_time_in[edge.source], time_in[edge.destination]);
+  }
+}
+
+void BridgeDFSVisitor::ForwardOrCrossEdge(const Edge& edge) {
+  min_back_time_in[edge.source] \
+    = std::min(min_back_time_in[edge.source], time_in[edge.destination]);
 }

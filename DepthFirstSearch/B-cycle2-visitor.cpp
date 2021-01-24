@@ -17,6 +17,10 @@ class IteratorRange {
       return end_;
     }
 
+    size_t size() const {  // NOLINT
+      return std::distance(begin_, end_);
+    }
+
   private:
     Iterator begin_, end_;
 };
@@ -33,39 +37,41 @@ class IGraph {
     virtual IteratorRange<VertexIterator> GetVertices() const = 0;
 
     using EdgeIterator = typename std::vector<Edge>::const_iterator;
-    virtual IteratorRange<EdgeIterator> GetOutgoingEdges([[maybe_unused]] Vertex vertex) const = 0;
+    virtual IteratorRange<EdgeIterator> GetOutgoingEdges(Vertex /* vertex */) const = 0;
 };
 
 template <class Vertex, class Edge>
 class IDFSVisitor {
   public:
-    virtual void InitializeVertex([[maybe_unused]] Vertex vertex) {}
-    virtual void DiscoverVertex([[maybe_unused]] Vertex vertex) {}
-    virtual void StartVertex([[maybe_unused]] Vertex vertex) {}
-    virtual void ExamineEdge([[maybe_unused]] const Edge& edge) {}
-    virtual void TreeEdge([[maybe_unused]] const Edge& edge) {}
-    virtual void BackEdge([[maybe_unused]] const Edge& edge) {}
-    virtual void ForwardOrCrossEdge([[maybe_unused]] const Edge& edge) {}
-    virtual void FinishEdge([[maybe_unused]] const Edge& edge) {}
-    virtual void FinishVertex([[maybe_unused]] Vertex vertex) {}
+    virtual void InitializeVertex(Vertex /* vertex */) {}
+    virtual void DiscoverVertex(Vertex /* vertex */) {}
+    virtual void StartVertex(Vertex /* vertex */) {}
+    virtual void ExamineEdge(const Edge& /* edge */) {}
+    virtual void TreeEdge(const Edge& /* edge */) {}
+    virtual void BackEdge(const Edge& /* edge */) {}
+    virtual void ForwardOrCrossEdge(const Edge& /* edge */) {}
+    virtual void FinishEdge(const Edge& /* edge */) {}
+    virtual void FinishVertex(Vertex /* vertex */) {}
 };
 
-template <class Vertex, class Edge, class Graph, class DFSVisitor>
-class DFS {
+enum class Color {
+  kWhite = 0,
+  kGray = 1,
+  kBlack = 2
+};
+
+template <class Vertex>
+class IColormap {
   public:
-    enum class Color {
-      kWhite = 0,
-      kGray = 1,
-      kBlack = 2
-    };
-
-    std::unordered_map<Vertex, Color> color;
-
-    void DepthFirstSearch(const Graph& graph, DFSVisitor& visitor, Vertex start = -1);
-
-  private:
-    void DepthFirstSearchVisit(const Graph& graph, Vertex vertex, DFSVisitor& visitor);
+    virtual Color GetColor(Vertex /* vertex */) const = 0;
+    virtual void SetColor(Vertex /* vertex */, Color /* color */) = 0;
 };
+
+template <class Vertex, class Graph, class Colormap, class DFSVisitor>
+void DepthFirstSearch(const Graph& graph, DFSVisitor& visitor, Vertex start = -1);
+
+template <class Vertex, class Graph, class Colormap, class DFSVisitor>
+void DepthFirstSearchVisit(const Graph& graph, Colormap& colormap, DFSVisitor& visitor, Vertex vertex);
 
 using Vertex = int;
 
@@ -73,10 +79,10 @@ using Edge = IEdge<Vertex>;
 
 class Graph : IGraph<Vertex, Edge> {
   public:
-    explicit Graph(int vertex_count) : kVertexCount(vertex_count) {
-      vertices_.resize(kVertexCount);
+    explicit Graph(int vertex_count) {
+      vertices_.resize(vertex_count);
       std::iota(vertices_.begin(), vertices_.end(), 0);
-      outgoing_edges_.resize(kVertexCount);
+      outgoing_edges_.resize(vertex_count);
     }
 
     void AddEdge(const Edge& edge);
@@ -88,9 +94,21 @@ class Graph : IGraph<Vertex, Edge> {
     IteratorRange<EdgeIterator> GetOutgoingEdges(Vertex vertex) const override;
 
   private:
-    const int kVertexCount;
     std::vector<Vertex> vertices_;
     std::vector<std::vector<Edge>> outgoing_edges_;
+};
+
+class Colormap : IColormap<Vertex> {
+  public:
+    explicit Colormap(int vertex_count) {
+      colormap_.resize(vertex_count, Color::kWhite);
+    }
+
+    Color GetColor(Vertex vertex) const override;
+    void SetColor(Vertex vertex, Color color) override;
+
+  private:
+    std::vector<Color> colormap_;
 };
 
 struct CycleDFSVisitor : IDFSVisitor<Vertex, Edge> {
@@ -114,15 +132,14 @@ int main() {
   std::cin >> vertex_count >> edge_count;
   Graph graph(vertex_count);
   while (edge_count --> 0) {
-    int source, destination;
+    Vertex source, destination;
     std::cin >> source >> destination;
     --source, --destination;
     graph.AddEdge({source, destination});
   }
 
-  DFS<Vertex, Edge, Graph, CycleDFSVisitor> dfs;
   CycleDFSVisitor cycle_dfs_visitor;
-  dfs.DepthFirstSearch(graph, cycle_dfs_visitor);
+  DepthFirstSearch<Vertex, Graph, Colormap, CycleDFSVisitor>(graph, cycle_dfs_visitor);
 
   if (cycle_dfs_visitor.found_cycle) {
     std::cout << "YES\n";
@@ -137,41 +154,43 @@ int main() {
   return 0;
 }
 
-template <class Vertex, class Edge, class Graph, class DFSVisitor>
-void DFS<Vertex, Edge, Graph, DFSVisitor>::DepthFirstSearch(const Graph& graph, DFSVisitor& visitor, Vertex start) {
+template <class Vertex, class Graph, class Colormap, class DFSVisitor>
+void DepthFirstSearch(const Graph& graph, DFSVisitor& visitor, Vertex start) {
+  Colormap colormap(graph.GetVertices().size());
   for (const auto& vertex : graph.GetVertices()) {
-    color[vertex] = Color::kWhite;
+    colormap.SetColor(vertex, Color::kWhite);
     visitor.InitializeVertex(vertex);
   }
   if (start != -1) {
     visitor.StartVertex(start);
-    DepthFirstSearchVisit(graph, start, visitor);
+    DepthFirstSearchVisit(graph, colormap, visitor, start);
   }
   for (const auto& vertex : graph.GetVertices()) {
-    if (color[vertex] == Color::kWhite) {
-      DepthFirstSearchVisit(graph, vertex, visitor);
+    if (colormap.GetColor(vertex) == Color::kWhite) {
+      visitor.StartVertex(vertex);
+      DepthFirstSearchVisit(graph, colormap, visitor, vertex);
     }
   }
 }
 
-template <class Vertex, class Edge, class Graph, class DFSVisitor>
-void DFS<Vertex, Edge, Graph, DFSVisitor>::DepthFirstSearchVisit(const Graph& graph, Vertex vertex, DFSVisitor& visitor) {
-  color[vertex] = Color::kGray;
+template <class Vertex, class Graph, class Colormap, class DFSVisitor>
+void DepthFirstSearchVisit(const Graph& graph, Colormap& colormap, DFSVisitor& visitor, Vertex vertex) {
+  colormap.SetColor(vertex, Color::kGray);
   visitor.DiscoverVertex(vertex);
   for (const auto& outgoing_edge : graph.GetOutgoingEdges(vertex)) {
     visitor.ExamineEdge(outgoing_edge);
     const auto destination = outgoing_edge.destination;
-    if (color[destination] == Color::kWhite) {
-      DepthFirstSearchVisit(graph, destination, visitor);
+    if (colormap.GetColor(destination) == Color::kWhite) {
+      DepthFirstSearchVisit(graph, colormap, visitor, destination);
       visitor.TreeEdge(outgoing_edge);
-    } else if (color[destination] == Color::kGray) {
+    } else if (colormap.GetColor(destination) == Color::kGray) {
       visitor.BackEdge(outgoing_edge);
     } else {
       visitor.ForwardOrCrossEdge(outgoing_edge);
     }
     visitor.FinishEdge(outgoing_edge);
   }
-  color[vertex] = Color::kBlack;
+  colormap.SetColor(vertex, Color::kBlack);
   visitor.FinishVertex(vertex);
 }
 
@@ -185,8 +204,16 @@ IteratorRange<VertexIterator> Graph::GetVertices() const {
 }
 
 using EdgeIterator = typename std::vector<Edge>::const_iterator;
-IteratorRange<EdgeIterator> Graph::GetOutgoingEdges([[maybe_unused]] Vertex vertex) const {
+IteratorRange<EdgeIterator> Graph::GetOutgoingEdges(Vertex vertex) const {
   return {outgoing_edges_[vertex].begin(), outgoing_edges_[vertex].end()};
+}
+
+Color Colormap::GetColor(Vertex vertex) const {
+  return colormap_[vertex];
+}
+
+void Colormap::SetColor(Vertex vertex, Color color) {
+  colormap_[vertex] = color;
 }
 
 void CycleDFSVisitor::DiscoverVertex(Vertex vertex) {
