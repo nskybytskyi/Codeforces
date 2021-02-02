@@ -2,9 +2,9 @@
 #include <iostream>
 #include <vector>
 
-class MinimumSparseTable {
+class SparseTable {
   public:
-    explicit MinimumSparseTable(int size) : size_(size), max_power_(32 - __builtin_clz(size)) {
+    explicit SparseTable(int size) : size_(size), max_power_(32 - __builtin_clz(size)) {
       sparse_table_.resize(max_power_);
       for (auto& sparse_layer : sparse_table_) {
         sparse_layer.resize(size_);
@@ -29,7 +29,7 @@ int main() {
 
   int array_size, query_count;
   std::cin >> array_size >> query_count;
-  MinimumSparseTable sparse_table(array_size);
+  SparseTable sparse_table(array_size);
 
   std::vector<int> array(array_size);
   std::cin >> array[0];
@@ -54,7 +54,7 @@ int main() {
   return 0;
 }
 
-void MinimumSparseTable::Initialize(const std::vector<int>& array) {
+void SparseTable::Initialize(const std::vector<int>& array) {
   std::copy(array.begin(), array.end(), sparse_table_[0].begin());
   for (int power = 1; power < max_power_; ++power) {
     for (int first = 0, second = 1 << (power - 1); second < size_; ++first, ++second) {
@@ -64,7 +64,7 @@ void MinimumSparseTable::Initialize(const std::vector<int>& array) {
   }
 }
 
-int MinimumSparseTable::Minimum(int left, int right) const {
+int SparseTable::Minimum(int left, int right) const {
   const int power = 31 - __builtin_clz(right + 1 - left);
   return std::min(sparse_table_[power][left], sparse_table_[power][right + 1 - (1 << power)]);
 }

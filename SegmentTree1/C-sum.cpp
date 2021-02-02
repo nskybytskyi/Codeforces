@@ -3,9 +3,9 @@
 #include <limits>
 #include <vector>
 
-class RangeSumAssignSegmentTree {
+class SegmentTree {
   public:
-    explicit RangeSumAssignSegmentTree(int size) : size_(size) {
+    explicit SegmentTree(int size) : size_(size) {
       lazy_.resize(size_ << 2, -1);
       sum_.resize(size_ << 2);
     }
@@ -35,7 +35,7 @@ int main() {
 
   int array_size;
   std::cin >> array_size;
-  RangeSumAssignSegmentTree segment_tree(array_size);
+  SegmentTree segment_tree(array_size);
 
   int query_count;
   std::cin >> query_count;
@@ -57,15 +57,15 @@ int main() {
   return 0;
 }
 
-int64_t RangeSumAssignSegmentTree::RangeSum(int left, int right) {
+int64_t SegmentTree::RangeSum(int left, int right) {
   return RangeSum(left, right, 1, 0, size_ - 1);
 }
 
-void RangeSumAssignSegmentTree::RangeAssign(int left, int right, int value) {
+void SegmentTree::RangeAssign(int left, int right, int value) {
   RangeAssign(left, right, value, 1, 0, size_ - 1);
 }
 
-void RangeSumAssignSegmentTree::Push(int tree_vertex, int tree_left, int tree_right) {
+void SegmentTree::Push(int tree_vertex, int tree_left, int tree_right) {
   if (lazy_[tree_vertex] != -1) {
     if (tree_left != tree_right) {
       lazy_[tree_vertex << 1] = lazy_[(tree_vertex << 1) | 1] = lazy_[tree_vertex];
@@ -75,7 +75,7 @@ void RangeSumAssignSegmentTree::Push(int tree_vertex, int tree_left, int tree_ri
   }
 }
 
-int64_t RangeSumAssignSegmentTree::RangeSum(int left, int right,
+int64_t SegmentTree::RangeSum(int left, int right,
     int tree_vertex, int tree_left, int tree_right) {
   Push(tree_vertex, tree_left, tree_right);
   if (left > right) {
@@ -92,7 +92,7 @@ int64_t RangeSumAssignSegmentTree::RangeSum(int left, int right,
   }
 }
 
-void RangeSumAssignSegmentTree::RangeAssign(int left, int right, int value,
+void SegmentTree::RangeAssign(int left, int right, int value,
     int tree_vertex, int tree_left, int tree_right) {
   Push(tree_vertex, tree_left, tree_right);
   if (left <= right) {

@@ -3,9 +3,9 @@
 #include <limits>
 #include <vector>
 
-class RangeVariationSegmentTree {
+class SegmentTree {
   public:
-    explicit RangeVariationSegmentTree(int size) : size_(size) {
+    explicit SegmentTree(int size) : size_(size) {
       min_.resize(size_ << 2);
       max_.resize(size_ << 2);
     }
@@ -35,7 +35,7 @@ int main() {
   std::freopen("rvq.out", "w", stdout);
 
   const int array_size = 100'000;
-  RangeVariationSegmentTree segment_tree(array_size);
+  SegmentTree segment_tree(array_size);
 
   std::vector<int> array(array_size);
   for (int64_t index = 1; index <= array_size; ++index) {
@@ -60,11 +60,11 @@ int main() {
   return 0;
 }
 
-void RangeVariationSegmentTree::Initialize(const std::vector<int>& array) {
+void SegmentTree::Initialize(const std::vector<int>& array) {
   Initialize(array, 1, 0, size_ - 1);
 }
 
-void RangeVariationSegmentTree::Initialize(const std::vector<int>& array,
+void SegmentTree::Initialize(const std::vector<int>& array,
     int tree_vertex, int tree_left, int tree_right) {
   if (tree_left == tree_right) {
     max_[tree_vertex] = min_[tree_vertex] = array[tree_left];
@@ -79,12 +79,12 @@ void RangeVariationSegmentTree::Initialize(const std::vector<int>& array,
   }
 }
 
-int RangeVariationSegmentTree::RangeVariation(int left, int right) {
+int SegmentTree::RangeVariation(int left, int right) {
   const auto [range_min, range_max] = RangeVariation(left, right, 1, 0, size_ - 1);
   return range_max - range_min;
 }
 
-std::pair<int, int> RangeVariationSegmentTree::RangeVariation(int left, int right,
+std::pair<int, int> SegmentTree::RangeVariation(int left, int right,
     int tree_vertex, int tree_left, int tree_right) {
   if (left > right) {
     return {std::numeric_limits<int>::max(), std::numeric_limits<int>::min()};
@@ -100,11 +100,11 @@ std::pair<int, int> RangeVariationSegmentTree::RangeVariation(int left, int righ
   }
 }
 
-void RangeVariationSegmentTree::PointAssign(int index, int value) {
+void SegmentTree::PointAssign(int index, int value) {
   PointAssign(index, value, 1, 0, size_ - 1);
 }
 
-void RangeVariationSegmentTree::PointAssign(int index, int value,
+void SegmentTree::PointAssign(int index, int value,
     int tree_vertex, int tree_left, int tree_right) {
   if (tree_left == tree_right) {
     max_[tree_vertex] = min_[tree_vertex] = value;
