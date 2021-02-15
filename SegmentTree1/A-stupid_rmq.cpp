@@ -23,8 +23,8 @@ int main() {
   while (query_count --> 0) {
     int left, right;
     std::cin >> left >> right;
-    auto left_it = std::next(array.begin(), left - 1);
-    auto right_it = std::next(array.begin(), right);
+    const auto left_it = std::next(array.begin(), left - 1);
+    const auto right_it = std::next(array.begin(), right);
     std::cout << *std::min_element(left_it, right_it) << "\n";
   }
 

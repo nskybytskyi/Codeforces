@@ -50,8 +50,7 @@ int main() {
     }
   }
 
-  auto it = std::find(permutation.begin(), permutation.end(), 0);
-  *it = ((length + 1) * length) / 2 - std::accumulate(permutation.begin(), permutation.end(), 0);
+  *std::find(permutation.begin(), permutation.end(), 0) = length;
   answer(permutation);
 
   return 0;
