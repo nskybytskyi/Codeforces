@@ -10,31 +10,22 @@ int main() {
     vector<int> a(n);
     for (auto& ai : a)
       cin >> ai;
-    unordered_map<int, int> f;
+    map<int, int> f;
     for (auto ai : a)
       ++f[ai];
-    vector<int> v;
+    set<int> v;
     for (auto [_, vi] : f)
-      v.push_back(vi);
-    sort(v.begin(), v.end());
+      v.insert(vi);
     int ans = n;
-    vector<int> ps = {0};
-    partial_sum(v.begin(), v.end(), back_inserter(ps));
-    vector<int> ss = {0};
-    partial_sum(v.rbegin(), v.rend(), back_inserter(ss));
-    reverse(ss.begin(), ss.end());
-    // for (auto psi : ps) {
-    //   cout << psi << " ";
-    // }
-    // cout << "\n";
-    // for (auto ssi : ss) {
-    //   cout << ssi << " ";
-    // }
-    // cout << "\n";
-    const int k = v.size();
-    for (int i = 0; i < k; ++i) {
-      int c = v[i];
-      ans = min(ans, ps[i] + (ss[i] - c * (k - i)));
+    for (auto vi : v) {
+      int curr = 0;
+      for (auto [kj, vj] : f) {
+        if (vj >= vi)
+          curr += vj - vi;
+        else
+          curr += vj;
+      }
+      ans = min(ans, curr);
     }
     cout << ans << "\n";
   }
