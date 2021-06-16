@@ -42,7 +42,7 @@ Not all of the aforementioned 56 problems are equally good for studying bipartit
 
 - [_Brevity is Soul of Wit_](https://codeforces.com/problemset/problem/120/H) (1800, 2011)
 
-    This old but gold problem from 2011 Saratov School Regional Team Contest requires knowledge of polynomial hashing and Kuhn bipartite matching. My solution: [120H.cpp](120H.cpp)
+    This old but gold problem from Saratov School Regional Team Contest requires knowledge of polynomial hashing and Kuhn bipartite matching. My solution: [120H.cpp](120H.cpp)
 
 - [_Array and Operations_](https://codeforces.com/problemset/problem/498/C) (2100, 2014)
 
@@ -50,7 +50,11 @@ Not all of the aforementioned 56 problems are equally good for studying bipartit
 
 - [_Valuable Paper_](https://codeforces.com/problemset/problem/1423/B) (1900, 2020)
 
-    This funny problem from recent 2020 Bubble Cup Finals was solved by all top teams and requires knowledge of binary search and Hopcroft—Karp bipartite matching. My solution: [1423B.cpp](1423B.cpp)
+    This funny problem from a recent Bubble Cup Finals was solved by all top teams and requires knowledge of binary search and Hopcroft—Karp bipartite matching. My solution: [1423B.cpp](1423B.cpp)
+
+- [_The Doctor Meets Vader (Medium)_](https://codeforces.com/problemset/problem/1184/B2) (2200, 2019)
+
+    This is a problem from Helvetic Coding Contest that I could not solve in contest two years ago. It is always satisfying to come back to some old contest and feel you progress. Besides bipartite matching, it requires all pairs shortest paths and some relatively easy logical reasoning. My solution: [1423B2.cpp](1423B2.cpp)
 
 - [_Exploration plan_](https://codeforces.com/problemset/problem/852/D) (2100, 2017)
 
@@ -58,4 +62,4 @@ Not all of the aforementioned 56 problems are equally good for studying bipartit
 
 Note: you may have noticed that these files contain the following line:
 `// library code goes here`
-You can get that library code from the `lib.cpp` file.
+You can get that library code from the [lib.cpp](lib.cpp) file.
