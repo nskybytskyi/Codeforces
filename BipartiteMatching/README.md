@@ -14,13 +14,13 @@ Don't trust me? Name one!
 
 This Finnish platform is constantly gaining popularity, and so does «Competitive Programmer's Handbook» by Antti Laaksonen, one of CSES's key figures. Upon reading it, you will discover that the only time bipartite matching is mentioned … is in the chapter about flows:
 
-![bipartite matching is a special case of a flow](cses-toc.png)
+![bipartite matching is a special case of a flow](cses-toc-inv.png)
 
 ## Cormen
 
 If you open the table of contests of a famous book «Introduction to Algorithms» by Cormen, Leiserson, Rivest, and Stein, you will find out that it suggests the same thing:
 
-![bipartite matching is a special case of a flow](clrs-toc.png)
+![bipartite matching is a special case of a flow](clrs-toc-inv.png)
 
 > Therefore, there must be a theoretical reduction from one problem to another.
 
