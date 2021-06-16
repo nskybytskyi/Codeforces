@@ -10,13 +10,15 @@ Don't trust me? Name one!
 
 - Alt—Blum—Mehlhorn—Paul? It is based on push-relabel maximum flow algorithm, but you probably know it already if you know its name in the first place 🙃
 
-## CSES
+## Theory
+
+### CSES
 
 This Finnish platform is constantly gaining popularity, and so does «Competitive Programmer's Handbook» by Antti Laaksonen, one of CSES's key figures. Upon reading it, you will discover that the only time bipartite matching is mentioned … is in the chapter about flows:
 
 ![bipartite matching is a special case of a flow](cses-toc-inv.png)
 
-## Cormen
+### Cormen
 
 If you open the table of contests of a famous book «Introduction to Algorithms» by Cormen, Leiserson, Rivest, and Stein, you will find out that it suggests the same thing:
 
@@ -26,7 +28,9 @@ If you open the table of contests of a famous book «Introduction to Algorithms�
 
 However, one may argue that not all theoretical reductions work well in practice, so let's talk about practice.
 
-## Codeforces
+## Practice
+
+### Codeforces
 
 If you open Codeforces problemset, you will discover that there are 56 problems with tag `#graph-matchings`. Not that many, but enough to perform some statistical analysis. What shocks me is that 24 of them have tag `#flows`! 
 
@@ -58,8 +62,10 @@ Not all of the aforementioned 56 problems are equally good for studying bipartit
 
 - [_Exploration plan_](https://codeforces.com/problemset/problem/852/D) (2100, 2017)
 
-    Yet another problem from Bubble Cup Finals, but this time it was not that easy, combining all pairs shortest paths and binary search before you even get to the bipartite matching itself. <!-- My solution: [852D.cpp](852D.cpp) -->
+    Yet another problem from Bubble Cup Finals, but this time it was not that easy, combining all pairs shortest paths and binary search before you even get to the bipartite matching itself. My solution: [852D.cpp](852D.cpp)
 
 Note: you may have noticed that these files contain the following line:
-`// library code goes here`
+```cpp
+// library code goes here
+```
 You can get that library code from the [lib.cpp](lib.cpp) file.

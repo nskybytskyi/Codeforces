@@ -2,8 +2,18 @@
 using namespace std;
 // library code goes here
 
-template <typename T = int>
-T BinarySearch(T lower_bound, T upper_bound, std::function<bool(T)> unary_predicate, T precision = 1);
+template <typename T>
+T BinarySearch(T lower_bound, T upper_bound, std::function<bool(T)> unary_predicate, T precision = 1) {
+  while (lower_bound + precision < upper_bound) {
+    T middle = lower_bound + (upper_bound - lower_bound) / 2;
+    if (unary_predicate(middle)) {
+      lower_bound = middle;
+    } else {
+      upper_bound = middle;
+    }
+  }
+  return lower_bound;
+}
 
 int main() {
   ios::sync_with_stdio(0), cin.tie(0);
@@ -31,17 +41,4 @@ int main() {
     cout << get<0>(e[BinarySearch<int>(lo, hi, cannot)]) << "\n";
 
   return 0;
-}
-
-template <typename T>
-T BinarySearch(T lower_bound, T upper_bound, std::function<bool(T)> unary_predicate, T precision) {
-  while (lower_bound + precision < upper_bound) {
-    T middle = lower_bound + (upper_bound - lower_bound) / 2;
-    if (unary_predicate(middle)) {
-      lower_bound = middle;
-    } else {
-      upper_bound = middle;
-    }
-  }
-  return lower_bound;
 }
