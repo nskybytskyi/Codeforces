@@ -58,7 +58,7 @@ Not all of the aforementioned 56 problems are equally good for studying bipartit
 
 - [_The Doctor Meets Vader (Medium)_](https://codeforces.com/problemset/problem/1184/B2) (2200, 2019)
 
-    This is a problem from Helvetic Coding Contest that I could not solve in contest two years ago. It is always satisfying to come back to some old contest and feel you progress. Besides bipartite matching, it requires all pairs shortest paths and some relatively easy logical reasoning. My solution: [1423B2.cpp](1423B2.cpp)
+    This is a problem from Helvetic Coding Contest that I could not solve in contest two years ago. It is always satisfying to come back to some old contest and feel you progress. Besides bipartite matching, it requires all pairs shortest paths and some relatively easy logical reasoning. My solution: [1184B2.cpp](1184B2.cpp)
 
 - [_Exploration plan_](https://codeforces.com/problemset/problem/852/D) (2100, 2017)
 
