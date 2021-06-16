@@ -42,7 +42,7 @@ Not all of the aforementioned 56 problems are equally good for studying bipartit
 
 - [_George and Interesting Graph_](https://codeforces.com/problemset/problem/387/D) (2200, 2014)
 
-    This Div2D problem may have been difficult at that time, but it is fairly straightforward once you learn at least some bipartite matching algorithm. It is the first on my list because it does not require anything apart from bipartite matching. My solution: [387D.cpp](387D.cpp)
+    This Div2D problem may have been difficult at that time, but it is fairly straightforward once you learn some bipartite matching algorithm. It is the first on my list because it does not require anything apart from brute force and bipartite matching. My solution: [387D.cpp](387D.cpp)
 
 - [_Brevity is Soul of Wit_](https://codeforces.com/problemset/problem/120/H) (1800, 2011)
 
