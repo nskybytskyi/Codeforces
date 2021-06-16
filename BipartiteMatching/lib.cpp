@@ -106,8 +106,9 @@ BipartiteMatching Kuhn(const BipartiteGraph& bipartite_graph) {
   };
 
   for (auto node : bipartite_graph.GetNodes().first) {
-    used.assign(used.size(), false);
-    try_kuhn(node);
+    if (try_kuhn(node)) {
+      used.assign(used.size(), false);
+    }
   }
 
   return bipartite_matching;
