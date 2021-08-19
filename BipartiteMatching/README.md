@@ -64,6 +64,10 @@ Not all of the aforementioned 56 problems are equally good for studying bipartit
 
     Yet another problem from Bubble Cup Finals, but this time it was not that easy, combining all pairs shortest paths and binary search before you even get to the bipartite matching itself. My solution: [852D.cpp](852D.cpp)
 
+- [_Button Lock_](https://codeforces.com/problemset/problem/1510/B) (2600, 2021)
+
+    I came accross this problem much later than all the previous ones. A surprising feature of this problem is that it requires Kuhn as only it works with certain greedy approaches. My solution: [1510B.cpp](1510B.cpp)
+
 Note: you may have noticed that these files contain the following line:
 ```cpp
 // library code goes here
